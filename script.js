@@ -1,49 +1,50 @@
-//your code here
-// Get all draggable elements and the container
 const draggables = document.querySelectorAll('.image');
 const container = document.getElementById('parent');
 
-// Add event listeners for dragstart, dragover, dragenter, and drop
 draggables.forEach(draggable => {
-    draggable.addEventListener('dragstart', dragStart);
-    draggable.addEventListener('dragend', dragEnd);
+    draggable.addEventListener('dragstart', handleDragStart);
+    draggable.addEventListener('dragover', handleDragOver);
+    draggable.addEventListener('drop', handleDrop);
+    draggable.addEventListener('dragenter', handleDragEnter);
+    draggable.addEventListener('dragleave', handleDragLeave);
 });
-
-container.addEventListener('dragover', dragOver);
-container.addEventListener('dragenter', dragEnter);
-container.addEventListener('drop', drop);
 
 let draggedElement = null;
 
-function dragStart(e) {
-    draggedElement = this; // Store the dragged element
+function handleDragStart(e) {
+    draggedElement = this;
     setTimeout(() => {
-        this.style.display = 'none'; // Hide the dragged element during drag
+        this.style.opacity = '0.5';
     }, 0);
 }
 
-function dragEnd(e) {
+function handleDragEnd(e) {
     setTimeout(() => {
-        draggedElement.style.display = 'block'; // Show the dragged element after drag
+        draggedElement.style.opacity = '1';
         draggedElement = null;
     }, 0);
 }
 
-function dragOver(e) {
-    e.preventDefault(); // Prevent default behavior to allow dropping
+function handleDragOver(e) {
+    e.preventDefault(); // Allow drop
 }
 
-function dragEnter(e) {
+function handleDragEnter(e) {
     e.preventDefault();
+    this.style.border = '2px dashed #000';
 }
 
-function drop(e) {
+function handleDragLeave(e) {
+    this.style.border = '2px solid black';
+}
+
+function handleDrop(e) {
     e.preventDefault();
-    if (draggedElement !== this && this.classList.contains('image')) {
-        // Swap the content of the dragged element and the drop target
-        const target = this;
-        const targetHTML = target.innerHTML;
-        target.innerHTML = draggedElement.innerHTML;
-        draggedElement.innerHTML = targetHTML;
+    this.style.border = '2px solid black';
+    if (draggedElement !== this) {
+        const tempHTML = this.innerHTML;
+        this.innerHTML = draggedElement.innerHTML;
+        draggedElement.innerHTML = tempHTML;
     }
+    draggedElement.style.opacity = '1';
 }
