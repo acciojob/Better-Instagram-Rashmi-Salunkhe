@@ -45,3 +45,5 @@ function handleDrop(e) {
         draggedElement.innerHTML = tempHTML;
     }
 }
+
+cy.get('#div3').drag('#div6');
