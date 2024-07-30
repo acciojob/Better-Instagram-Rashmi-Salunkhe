@@ -46,4 +46,3 @@ function handleDrop(e) {
     }
 }
 
-cy.get('#div3').drag('#div6');
