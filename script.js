@@ -14,6 +14,8 @@ let draggedElement = null;
 
 function handleDragStart(e) {
     draggedElement = this;
+    // Store the ID of the draggable element in the data transfer
+    e.dataTransfer.setData('text', this.id);
 }
 
 function handleDragEnd(e) {
