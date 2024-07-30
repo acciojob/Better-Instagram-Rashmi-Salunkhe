@@ -1,48 +1,29 @@
-const draggables = document.querySelectorAll('.image');
-const container = document.getElementById('drag1');
+describe('Drag and Drop Images', () => {
+  beforeEach(() => {
+    cy.visit('http://localhost:3000'); // Change this to your actual URL
+  });
 
-draggables.forEach(draggable => {
-    draggable.addEventListener('dragstart', handleDragStart);
-    draggable.addEventListener('dragover', handleDragOver);
-    draggable.addEventListener('drop', handleDrop);
-    draggable.addEventListener('dragenter', handleDragEnter);
-    draggable.addEventListener('dragleave', handleDragLeave);
-    draggable.addEventListener('dragend', handleDragEnd);
-});
+  it('should drag and drop images', () => {
+    const draggable = Cypress.$('#div1')[0]; // Pick up this
+    const droppable = Cypress.$('#div5')[0]; // Drop over this
 
-let draggedElement = null;
+    const coords = droppable.getBoundingClientRect();
 
-function handleDragStart(e) {
-    draggedElement = this;
-    // Store the ID of the draggable element in the data transfer
-    e.dataTransfer.setData('text', this.id);
-}
+    draggable.dispatchEvent(new MouseEvent('mousedown', { clientX: 0, clientY: 0 }));
+    draggable.dispatchEvent(new MouseEvent('mousemove', { clientX: 10, clientY: 0 }));
+    draggable.dispatchEvent(new MouseEvent('mousemove', { clientX: coords.x + 10, clientY: coords.y + 10 }));
+    draggable.dispatchEvent(new MouseEvent('mouseup'));
 
-function handleDragEnd(e) {
-    this.style.opacity = '1';
-    draggedElement = null;
-}
+    cy.get('#div5').within(() => {
+      cy.get('.image').should('have.length', 1); // Adjust this assertion based on your requirements
+    });
+  });
 
-function handleDragOver(e) {
-    e.preventDefault(); // Allow drop
-}
-
-function handleDragEnter(e) {
-    e.preventDefault();
-    this.style.border = '2px dashed #000';
-}
-
-function handleDragLeave(e) {
-    this.style.border = '2px solid black';
-}
-
-function handleDrop(e) {
-    e.preventDefault();
-    this.style.border = '2px solid black';
-    if (draggedElement !== this) {
-        const tempHTML = this.innerHTML;
-        this.innerHTML = draggedElement.innerHTML;
-        draggedElement.innerHTML = tempHTML;
+  it('should verify presence of elements', () => {
+    for (let index = 1; index <= 6; index++) {
+      cy.get(`#div${index}`).should('have.length', 1);
     }
-}
+  });
 
+  // Add more test cases as needed
+});
