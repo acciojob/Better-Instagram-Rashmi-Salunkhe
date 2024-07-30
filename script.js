@@ -1,5 +1,5 @@
 const draggables = document.querySelectorAll('.image');
-const container = document.getElementById('parent');
+const container = document.getElementById('drag1');
 
 draggables.forEach(draggable => {
     draggable.addEventListener('dragstart', handleDragStart);
