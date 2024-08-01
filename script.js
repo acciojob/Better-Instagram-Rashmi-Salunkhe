@@ -1,29 +1,56 @@
-describe('Drag and Drop Images', () => {
-  beforeEach(() => {
-    cy.visit('http://localhost:3000'); // Change this to your actual URL
-  });
+document.addEventListener("DOMContentLoaded",()=>{
+let draggables = document.querySelectorAll(".image")
+// console.log(draggables)
 
-  it('should drag and drop images', () => {
-    const draggable = Cypress.$('#div1')[0]; // Pick up this
-    const droppable = Cypress.$('#div5')[0]; // Drop over this
+let draggedElement = null // which card/div you have started dragging
+draggables.forEach(draggable =>{
 
-    const coords = droppable.getBoundingClientRect();
+    // dragStart, dragEnd
 
-    draggable.dispatchEvent(new MouseEvent('mousedown', { clientX: 0, clientY: 0 }));
-    draggable.dispatchEvent(new MouseEvent('mousemove', { clientX: 10, clientY: 0 }));
-    draggable.dispatchEvent(new MouseEvent('mousemove', { clientX: coords.x + 10, clientY: coords.y + 10 }));
-    draggable.dispatchEvent(new MouseEvent('mouseup'));
+    draggable.addEventListener("dragstart",(e)=>{
+         draggedElement = e.target
+        //  e.dataTransfer.setData("text", e.target.id)
+         draggedElement.style.opacity = 0.5
+    })
 
-    cy.get('#div5').within(() => {
-      cy.get('.image').should('have.length', 1); // Adjust this assertion based on your requirements
-    });
-  });
+    draggable.addEventListener("dragend",(e)=>{
+        e.target.style.opacity = 1
+   })
 
-  it('should verify presence of elements', () => {
-    for (let index = 1; index <= 6; index++) {
-      cy.get(`#div${index}`).should('have.length', 1);
-    }
-  });
+   // dragover, dragenter, drop
+   let dragEvents = ["dragover", "dragenter", "drop"]
+//    draggable.addEventListener("dragover", (e)=>{
+//         e.preventDefault()
+//    })
 
-  // Add more test cases as needed
-});
+    dragEvents.forEach(drag =>{
+        draggable.addEventListener(drag, (e)=>{
+                e.preventDefault()
+
+            if(drag == "drop"){
+                 const targetElement = e.target // where you want to drop it
+                console.log("Helllloo")
+                if(targetElement != draggedElement){
+                    // swap the background image
+                    const draggedBackground = draggedElement.id
+                    draggedElement.id = targetElement.id
+                    targetElement.id = draggedBackground
+
+                    // swap: 
+
+                    const draggedText = draggedElement.innerText
+                    draggedElement.innerText = targetElement.innerText
+                    targetElement.innerText = draggedText
+
+
+                }
+
+
+
+            }
+        })
+    })
+
+
+})
+})
