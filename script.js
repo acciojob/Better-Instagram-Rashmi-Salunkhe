@@ -1,47 +1,35 @@
+ let draggedImage = null;  // Global variable to hold the dragged image element
 
-let dragindex = 0;
-let dropindex = 0;
-let clone = "";
-
-const images = document.querySelectorAll(".image");
-
-function drag(e) {
-  e.dataTransfer.setData("text", e.target.id);
-}
-
-function allowDrop(e) {
-  e.preventDefault();
-}
-
-function drop(e) {
-  clone = e.target.cloneNode(true);
-  let data = e.dataTransfer.getData("text");
-  let nodelist = document.getElementById("parent").childNodes;
-  console.log(data, e.target.id);
-  for (let i = 0; i < nodelist.length; i++) {
-    if (nodelist[i].id == data) {
-      dragindex = i;
-    }
+  // Function to allow dropping
+  function allowDrop(event) {
+      event.preventDefault(); // Necessary to allow a drop
   }
-
-  dragdrop(clone);
-
-  document
-    .getElementById("parent")
-    .replaceChild(document.getElementById(data), e.target);
-
-  document
-    .getElementById("parent")
-    .insertBefore(
-      clone,
-      document.getElementById("parent").childNodes[dragindex]
-    );
-}
-
-const dragdrop = (image) => {
-  image.ondragstart = drag;
-  image.ondragover = allowDrop;
-  image.ondrop = drop;
-};
-
-images.forEach(dragdrop);
+  
+  // Function to handle drag event
+  function drag(event) {
+      draggedImage = event.target; // Set the dragged image to the current element
+  }
+  
+  // Function to handle drop event
+  function drop(event) {
+      event.preventDefault(); // Prevent default behavior
+  
+      const targetContainer = event.currentTarget; // Container where the image is dropped
+  
+      // Ensure that the target container doesn't contain the dragged image already
+      if (targetContainer !== draggedImage.parentElement) {
+          // Get the target image (if any) within the container
+          const targetImage = targetContainer.querySelector('img');
+  
+          // Swap the images if there is a target image
+          if (targetImage) {
+              // Swap the src attribute of the dragged image and target image
+              const tempSrc = targetImage.src;
+              targetImage.src = draggedImage.src;
+              draggedImage.src = tempSrc;
+          } else {
+              // If the target container is empty, move the dragged image to the new container
+              targetContainer.appendChild(draggedImage);
+          }
+      }
+  }
